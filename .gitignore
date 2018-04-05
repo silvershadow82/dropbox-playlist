@@ -8,4 +8,4 @@ build/
 ios/.generated/
 packages
 .flutter-plugins
-env/
+config.yaml

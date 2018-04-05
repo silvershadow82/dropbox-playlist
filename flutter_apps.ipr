@@ -775,7 +775,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/lib/dropbox.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/env/config.dev.yaml">
           <value>
             <set />
           </value>
@@ -811,6 +821,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/lib/settings.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/storage.dart">
           <value>
             <set />
           </value>

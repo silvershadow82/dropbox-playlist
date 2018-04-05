@@ -2,16 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import './storage.dart';
+import './properties.dart';
 
 typedef void OnError(Exception exception);
 
 class DropBox {
-  String token;
-  String appFolder;
+  Property token;
+  Storage storage;
 
-  DropBox({String token, String appFolder}) : assert(token != null) {
-    this.token = token;
-    this.appFolder = appFolder;
+  DropBox() {
+    this.token = new Property('accessToken');
+    Storage.getInstance().then((storage) => this.storage = storage);
   }
 
   /// List contents of a folder
@@ -21,7 +23,7 @@ class DropBox {
         bool includeDeleted = false}) async {
     var uri = new Uri.https('api.dropboxapi.com', '/2/files/list_folder');
     var response = await http.post(uri.toString(), headers: {
-    'Authorization': 'Bearer ${this.token}',
+    'Authorization': 'Bearer ${token.value}',
     'Content-Type': 'application/json'
     }, body: json.encode({
       'path': folder,
@@ -37,19 +39,20 @@ class DropBox {
   }
 
   Future<File> loadFile(String path) async {
-    var localFile = await createLocalFile(path);
+    var localFile = await storage.getLocalFile(path);
+
     /// Just return local file - no need to re-download
     if(await localFile.exists()) {
       return localFile;
     }
 
-    localFile = await localFile.create(recursive: true);
+    localFile = await storage.createLocalFile(localFile);
 
     final arg = json.encode({'path': path});
     var uri = new Uri.https('content.dropboxapi.com', '/2/files/download');
     var request = await new HttpClient().postUrl(uri);
 
-    request.headers.add('Authorization', 'Bearer ${this.token}');
+    request.headers.add('Authorization', 'Bearer ${token.value}');
     request.headers.add('Dropbox-API-Arg', arg);
 
     var response = await request.close();
@@ -57,10 +60,6 @@ class DropBox {
     await response.pipe(localFile.openWrite());
 
     return localFile;
-  }
-
-  Future<File> createLocalFile(String path) async {
-    return new File('$appFolder$path');
   }
 }
 
@@ -91,6 +90,8 @@ class Entry {
         pathDisplay = json['path_display'];
 
   bool isFile() => tag == 'file';
+
+  bool isAudioFile() => isFile() && (pathLower.endsWith('mp3') || pathLower.endsWith('m4a'));
 
   bool isFolder() => tag == 'folder';
 }

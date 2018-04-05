@@ -1,13 +1,12 @@
-import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:audioplayer/audioplayer.dart';
-import 'package:path_provider/path_provider.dart';
 import './settings.dart';
 import './properties.dart';
 import './dropbox.dart';
+import './storage.dart';
 
 class Playlist extends StatefulWidget {
   @override
@@ -25,6 +24,7 @@ class PlaySettings {
 
 class PlayListState extends State<Playlist> {
   DropBox dropBox;
+  Storage storage;
   AudioPlayer audioPlayer;
   PlayerState playerState = PlayerState.Stopped;
   Queue<PlayListItem> playQueue;
@@ -81,8 +81,8 @@ class PlayListState extends State<Playlist> {
       playList.shuffle(new Random());
     }
 
-    for (num i = 0; i < length; i++) {
-      playQueue.add(items.elementAt((index + i) % length));
+    for (var i = 0; i < length; i++) {
+      playQueue.add(playList.elementAt((index + i) % length));
     }
 
     print('Starting new queue with ${playQueue
@@ -110,11 +110,12 @@ class PlayListState extends State<Playlist> {
   @override
   void initState() {
     super.initState();
-    initDropBoxClient().then((ready) {
-      if (ready) {
-        initAudioPlayer();
-      }
-    });
+
+    initDropBoxClient();
+    initAudioPlayer();
+
+    Storage.getInstance().then((storage) => this.storage = storage);
+
     SharedPreferences.getInstance().then((prefs) {
       var repeat = prefs.get(prefsRepeatKey) ?? false;
       var shuffle = prefs.get(prefsShuffleKey) ?? false;
@@ -153,21 +154,22 @@ class PlayListState extends State<Playlist> {
     final folder = preferences.getString(prefsFolderKey);
     if (folder != null) {
       var entries = await dropBox.listFolder(folder, includeMediaInfo: true);
-      Set<PlayListItem> playListItems = entries.where((entry) => entry.isFile()
-          && (entry.pathLower.endsWith('mp3') || entry.pathLower.endsWith('m4a')))
-          .map((entry) => new PlayListItem(entry.name, 'Me', entry.pathLower))
-          .toSet();
+      List<String> localItems = await storage.listLocalItems(recursive: true);
+      Set<PlayListItem> playListItems = entries.where((entry) =>
+          entry.isAudioFile())
+          .map((entry) {
+        final local = localItems.firstWhere((item) =>
+            item.endsWith(entry.pathLower), orElse: () => null);
+        return new PlayListItem(entry.name, 'Me', entry.pathLower, downloaded: local != null);
+      }).toSet();
       setState(() {
         items = playListItems;
       });
     }
   }
 
-  Future<bool> initDropBoxClient() async {
-    final accessToken = new Property('accessToken');
-    var dir = await getApplicationDocumentsDirectory();
-    dropBox = new DropBox(token: accessToken.value, appFolder: dir.path);
-    return true;
+  void initDropBoxClient() {
+    dropBox = new DropBox();
   }
 
   void initAudioPlayer() {
@@ -210,10 +212,13 @@ class PlayListItem {
   Duration duration;
   Duration position;
   bool playing = false;
+  bool downloaded = false;
 
   final iconSize = 32.0;
 
-  PlayListItem(this.name, this.author, this.path);
+  PlayListItem(this.name, this.author, this.path, {downloaded: false}) {
+    this.downloaded = downloaded;
+  }
 
   void play(Duration duration) {
     this.position = new Duration();
@@ -270,7 +275,7 @@ class PlayListItem {
             ? buildProgressIndicator()
             : new Icon(Icons.play_circle_outline)),
         iconSize: iconSize,
-        color: Colors.blue,
+        color: (downloaded == true ? Colors.green : Colors.blue),
         onPressed: () => playCallback(this),
       ),
     );

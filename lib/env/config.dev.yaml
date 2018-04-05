@@ -1,6 +1,0 @@
----
-app:
-  name: "DropBox Playlist"
-  platform: "Flutter"
-  properties:
-    accessToken: "hX-KI8WsY2AAAAAAAAAMZbPccML08MpiadFIv0fZn8DrSKSrcpsrgwgS8RkRpjCD"

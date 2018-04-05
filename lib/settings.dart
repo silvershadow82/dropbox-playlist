@@ -1,10 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:path_provider/path_provider.dart';
 import './properties.dart';
 import './dropbox.dart';
+import './storage.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -14,6 +12,7 @@ class Settings extends StatefulWidget {
 class SettingsState extends State<Settings> {
   // Part of state
   DropBox dropBox;
+  Storage storage;
   String folder;
   bool showDropBoxFolders;
   num downloadedItemCount = 0;
@@ -22,8 +21,7 @@ class SettingsState extends State<Settings> {
   List<String> dropBoxFolders = [];
 
   SettingsState() : super() {
-    final accessToken = new Property('accessToken');
-    dropBox = new DropBox(token: accessToken.value);
+    dropBox = new DropBox();
   }
 
   _configureFolder() async {
@@ -50,10 +48,7 @@ class SettingsState extends State<Settings> {
   }
 
   _clearDownloadedItems() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    var items = directory.list(recursive: true);
-
-    items.forEach((file) => file.delete(recursive: true));
+    await storage.clearLocalItems();
 
     setState(() {
       this.downloadedItemCount = 0;
@@ -80,13 +75,13 @@ class SettingsState extends State<Settings> {
 
   _buildSettingsUI() {
     final configureButton = new FlatButton(
-        child: new Text('Configure'),
+        child: new Text('CONFIGURE', style: new TextStyle(fontWeight: FontWeight.bold)),
         textColor: Colors.blue,
         onPressed: _configureFolder);
     final clearDownloadedItemsButton = new FlatButton(
       onPressed: _clearDownloadedItems,
       disabledTextColor: Colors.grey[400],
-      child: new Text('Clear Items'),
+      child: new Text('CLEAR ITEMS', style: new TextStyle(fontWeight: FontWeight.bold)),
       textColor: Colors.blue,
     );
 
@@ -95,7 +90,7 @@ class SettingsState extends State<Settings> {
 
     List<Widget> widgets = [
       new Container(
-          padding: new EdgeInsets.all(padding),
+          padding: new EdgeInsets.all(padding - 4.0),
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -118,7 +113,7 @@ class SettingsState extends State<Settings> {
           )),
       new Divider(),
       new Container(
-        padding: new EdgeInsets.all(padding),
+        padding: new EdgeInsets.all(padding - 4.0),
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -128,7 +123,8 @@ class SettingsState extends State<Settings> {
             ),
             new Row(
               children: <Widget>[
-                new Text('$downloadedItemCount',
+                new Text(
+                  '$downloadedItemCount',
                   style: valueStyle,
                 ),
                 clearDownloadedItemsButton
@@ -139,26 +135,33 @@ class SettingsState extends State<Settings> {
       ),
       new Divider(),
       new Container(
-        padding: new EdgeInsets.all(padding),
+        padding: new EdgeInsets.symmetric(horizontal: padding),
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text('Repeat', style: valueStyle,),
+            new Text(
+              'Repeat',
+              style: valueStyle,
+            ),
             new Switch(value: this.repeat, onChanged: _onRepeatChanged)
           ],
         ),
       ),
       new Divider(),
       new Container(
-        padding: new EdgeInsets.all(padding),
+        padding: new EdgeInsets.symmetric(horizontal: padding),
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text('Shuffle', style: valueStyle,),
+            new Text(
+              'Shuffle',
+              style: valueStyle,
+            ),
             new Switch(value: this.shuffle, onChanged: _onShuffleChanged)
           ],
         ),
-      )
+      ),
+      new Divider()
     ];
 
     if (showDropBoxFolders) {
@@ -200,10 +203,11 @@ class SettingsState extends State<Settings> {
       this.repeat = preferences.get(prefsRepeatKey) ?? false;
       this.shuffle = preferences.get(prefsShuffleKey) ?? false;
     });
-    getApplicationDocumentsDirectory().then((directory) {
-      List<FileSystemEntity> items = directory.listSync(recursive: true);
-      this.downloadedItemCount = items.length;
-    });
+
+    Storage.getInstance().then((storage) {
+      this.storage = storage;
+      return storage.listLocalItems(recursive: true);
+    }).then((items) => this.downloadedItemCount = items.length);
   }
 
   @override

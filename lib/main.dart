@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import './playlist.dart';
+import './properties.dart';
 
-void main() => runApp(new MyApp());
+void main() async {
+  await Property.init();
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.

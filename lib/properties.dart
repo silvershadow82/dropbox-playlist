@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:yaml/yaml.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 const headerSize = 24.0;
 const padding = 10.0;
@@ -13,28 +13,21 @@ class Property {
   final String name;
   final String value;
 
-  static Map<String, Property> _cache = new Map<String, Property>();
+  static final Map<String, Property> _cache = new Map<String, Property>();
 
   factory Property(String name) {
-    if(_cache.isEmpty) {
-      _loadProperties();
-    }
-
     if(_cache.containsKey(name)) {
       return _cache[name];
-    } else {
-      return new Property._internal(name, null);
     }
+    return new Property._internal(name, null);
   }
 
   Property._internal(this.name, this.value);
 
-  static void _loadProperties() {
-    File file = new File('env/config.dev.yaml');
-    if(file?.existsSync() == true) {
-      Map app = loadYaml(file.readAsStringSync());
-      Map properties = app['properties'];
-      properties.forEach((key, value) => _cache[key] = new Property._internal(key, value.toString()));
-    }
+  static init() async {
+    String yaml = await rootBundle.loadString('config/config.yaml');
+    Map appConfig = loadYaml(yaml);
+    Map properties = appConfig['app']['properties'];
+    properties.forEach((key, value) => _cache[key] = new Property._internal(key, value));
   }
 }
