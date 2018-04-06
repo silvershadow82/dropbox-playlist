@@ -33,7 +33,7 @@ class Storage {
   }
 
   createLocalFile(String path) async {
-    var file = getLocalFile(path);
+    var file = await getLocalFile(path);
 
     if (await file.exists()) {
       return file;

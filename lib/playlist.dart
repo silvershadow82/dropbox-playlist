@@ -55,6 +55,7 @@ class PlayListState extends State<Playlist> {
 
     if (await file.exists()) {
       setState(() {
+        item.downloaded = true;
         activePlayListItem = item;
         playerState = PlayerState.Playing;
         start(file.path);

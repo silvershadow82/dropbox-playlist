@@ -46,7 +46,7 @@ class DropBox {
       return localFile;
     }
 
-    localFile = await storage.createLocalFile(localFile);
+    localFile = await storage.createLocalFile(path);
 
     final arg = json.encode({'path': path});
     var uri = new Uri.https('content.dropboxapi.com', '/2/files/download');

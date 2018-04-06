@@ -37,49 +37,52 @@ class SettingsState extends State<Settings> {
     });
   }
 
-  _onFolderSelected(String folder) async {
+  _onFolderSelected(String folder, context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString(prefsFolderKey, folder);
     preferences.commit();
+    _showMessage('Folder configured', context);
     setState(() {
       this.folder = folder;
       this.showDropBoxFolders = false;
     });
   }
 
-  _clearDownloadedItems() async {
+  _clearDownloadedItems(context) async {
     await storage.clearLocalItems();
-
+    _showMessage('Downloaded Items Cleared', context);
     setState(() {
       this.downloadedItemCount = 0;
     });
   }
 
-  _onRepeatChanged(repeat) async {
+  _onRepeatChanged(repeat, context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setBool(prefsRepeatKey, repeat);
     preferences.commit();
+    _showMessage('Repeat Settings Saved', context);
     setState(() {
       this.repeat = repeat;
     });
   }
 
-  _onShuffleChanged(shuffle) async {
+  _onShuffleChanged(shuffle, context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setBool(prefsShuffleKey, shuffle);
     preferences.commit();
+    _showMessage('Shuffle Settings Saved', context);
     setState(() {
       this.shuffle = shuffle;
     });
   }
 
-  _buildSettingsUI() {
+  _buildSettingsUI(context) {
     final configureButton = new FlatButton(
         child: new Text('CONFIGURE', style: new TextStyle(fontWeight: FontWeight.bold)),
         textColor: Colors.blue,
         onPressed: _configureFolder);
     final clearDownloadedItemsButton = new FlatButton(
-      onPressed: _clearDownloadedItems,
+      onPressed: () => _clearDownloadedItems(context),
       disabledTextColor: Colors.grey[400],
       child: new Text('CLEAR ITEMS', style: new TextStyle(fontWeight: FontWeight.bold)),
       textColor: Colors.blue,
@@ -143,7 +146,10 @@ class SettingsState extends State<Settings> {
               'Repeat',
               style: valueStyle,
             ),
-            new Switch(value: this.repeat, onChanged: _onRepeatChanged)
+            new Switch(
+                value: this.repeat,
+                onChanged: (repeat) => _onRepeatChanged(repeat, context)
+            )
           ],
         ),
       ),
@@ -157,7 +163,10 @@ class SettingsState extends State<Settings> {
               'Shuffle',
               style: valueStyle,
             ),
-            new Switch(value: this.shuffle, onChanged: _onShuffleChanged)
+            new Switch(
+                value: this.shuffle,
+                onChanged: (shuffle) => _onShuffleChanged(shuffle, context)
+            )
           ],
         ),
       ),
@@ -169,7 +178,7 @@ class SettingsState extends State<Settings> {
         constraints: new BoxConstraints.tight(new Size.fromHeight(295.0)),
         child: new ListView(
           padding: new EdgeInsets.all(paddingSmall),
-          children: _buildDropBoxFolders(),
+          children: _buildDropBoxFolders(context),
         ),
       ));
     }
@@ -177,7 +186,7 @@ class SettingsState extends State<Settings> {
     return widgets;
   }
 
-  _buildDropBoxFolders() {
+  _buildDropBoxFolders(context) {
     final tiles = dropBoxFolders.map((folder) => new ListTile(
           leading: new Icon(
             Icons.folder,
@@ -187,7 +196,7 @@ class SettingsState extends State<Settings> {
           trailing: new Radio(
               groupValue: this.folder,
               value: folder,
-              onChanged: _onFolderSelected),
+              onChanged: (folder) => _onFolderSelected(folder, context)),
         ));
     final divided = ListTile.divideTiles(context: context, tiles: tiles);
 
@@ -210,16 +219,30 @@ class SettingsState extends State<Settings> {
     }).then((items) => this.downloadedItemCount = items.length);
   }
 
+  Widget _buildMessageBar(String message) {
+    return new SnackBar(
+      content: new Text(message),
+      backgroundColor: Colors.lightGreen,
+      duration: new Duration(milliseconds: 500),
+    );
+  }
+
+  _showMessage(String message, BuildContext context) {
+    Scaffold.of(context).showSnackBar(_buildMessageBar(message));
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('Dropbox Settings'),
       ),
-      body: new Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: _buildSettingsUI(),
-      ),
+      body: new Builder(builder: (BuildContext context) {
+        return new Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: _buildSettingsUI(context),
+        );
+      }),
     );
   }
 }
