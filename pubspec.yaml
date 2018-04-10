@@ -15,6 +15,7 @@ dependencies:
   path_provider: ^0.4.0
   yaml: ^2.1.13
   path: ^1.5.1
+  js: ^0.6.1
 
 
 dev_dependencies:

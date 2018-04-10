@@ -760,6 +760,51 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../context_facade/core/src/main/java/com/smartling/contextfacade/service/ContextService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../context_facade/core/src/main/java/com/smartling/contextfacade/snapshot/HtmlSnapshot.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../context_facade/sdk/src/main/java/com/smartling/context/sdk/ContextApi.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../context_facade/sdk/src/main/java/com/smartling/context/sdk/pto/crawler/CrawlerResponsePTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../context_facade/sdk/src/main/java/com/smartling/context/sdk/pto/crawler/CrawlerSettingsPTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../context_facade/sdk/src/main/java/com/smartling/context/sdk/pto/crawler/CrawlerStatusResponsePTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../context_facade/sdk/src/main/java/com/smartling/context/sdk/pto/crawler/CreateCrawlerRequestPTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../context_facade/sdk/src/test/java/com/smartling/context/sdk/ContextApiTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../context_facade/service/src/main/java/com/smartling/contextfacade/match/async/response/ContextAsyncMatchResponseHandler.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/.gitignore">
           <value>
             <set />
@@ -800,7 +845,57 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/lib/js/jsmediatags.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/lib/main.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/mediatag-reader/mediatag_reader.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/mediatag_reader/mediafile_reader.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/mediatag_reader/mediatag_reader.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/mediatag_reader/src/arrayfile_reader.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/mediatag_reader/src/mediafile_reader.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/mediatag_reader/src/mediatag_reader.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/mediatag_reader/src/types.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/mediatag_reader/string_utils.dart">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/lib/mediatag_reader/types.dart">
           <value>
             <set />
           </value>
@@ -831,6 +926,61 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/pubspec.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/QA/webapps-itests/src/test/java/com/smartling/translations/business/managers/menu/NavigationMenuIntegrationManagerITest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/src/main/java/com/smartling/sdk/ContextApiStub.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/src/main/java/com/smartling/translations/business/managers/menu/NavigationMenuIntegrationManagerImpl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/src/main/java/com/smartling/translations/business/managers/pinch/selfservice/SelfServiceSiteManagerImpl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/src/main/java/com/smartling/translations/web/UrlMappings.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/src/test/java/com/smartling/translations/business/managers/menu/NavigationMenuIntegrationManagerTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/src/test/java/com/smartling/translations/business/managers/pinch/selfservice/SelfServiceSiteManagerTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/web/WEB-INF/applicationContext-pinch-business.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/web/WEB-INF/applicationContext-security.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../tms/web/stat/web/WEB-INF/messages/en-US/selfservice.properties">
           <value>
             <set />
           </value>

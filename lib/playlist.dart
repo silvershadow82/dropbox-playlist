@@ -13,7 +13,7 @@ class Playlist extends StatefulWidget {
   createState() => new PlayListState();
 }
 
-enum PlayerState { Playing, Stopped }
+enum PlayerState { Playing, Stopped, Paused }
 
 class PlaySettings {
   bool repeat;
@@ -71,12 +71,7 @@ class PlayListState extends State<Playlist> {
     final length = playList.length;
 
     /// Find start index in original list
-    for (var i = 0; i < length; i++) {
-      if (item == playList.elementAt(i)) {
-        index = i + 1;
-        break;
-      }
-    }
+    index = playList.indexOf(item) + 1;
 
     if (playSettings.shuffle) {
       playList.shuffle(new Random());
@@ -86,8 +81,7 @@ class PlayListState extends State<Playlist> {
       playQueue.add(playList.elementAt((index + i) % length));
     }
 
-    print('Starting new queue with ${playQueue
-        .length} items starting from number $index');
+    print('New queue with ${playQueue.length} items from index $index');
   }
 
   start(path) async {
@@ -99,6 +93,14 @@ class PlayListState extends State<Playlist> {
     setState(() {
       activePlayListItem.stop();
       playerState = PlayerState.Stopped;
+    });
+  }
+
+  pause() async {
+    await audioPlayer.pause();
+    setState(() {
+      activePlayListItem.pause();
+      playerState = PlayerState.Paused;
     });
   }
 
@@ -212,7 +214,7 @@ class PlayListItem {
   String path;
   Duration duration;
   Duration position;
-  bool playing = false;
+  PlayerState playerState = PlayerState.Stopped;
   bool downloaded = false;
 
   final iconSize = 32.0;
@@ -224,14 +226,16 @@ class PlayListItem {
   void play(Duration duration) {
     this.position = new Duration();
     this.duration = duration;
-    this.playing = true;
+    this.playerState = PlayerState.Playing;
   }
 
   void progress(Duration position) {
     this.position = position;
   }
 
-  void stop() => this.playing = false;
+  void stop() => this.playerState = PlayerState.Stopped;
+
+  void pause() => this.playerState = PlayerState.Paused;
 
   Widget buildProgressIndicator() {
     final progress = (position?.inMilliseconds?.toDouble() ?? 0.0) /
@@ -272,9 +276,11 @@ class PlayListItem {
         style: new TextStyle(fontStyle: FontStyle.italic),
       ),
       trailing: new IconButton(
-        icon: (playing == true
+        icon: (playerState == PlayerState.Playing
             ? buildProgressIndicator()
-            : new Icon(Icons.play_circle_outline)),
+            : (playerState == PlayerState.Paused
+              ? new Icon(Icons.pause_circle_outline)
+              : new Icon(Icons.play_circle_outline))),
         iconSize: iconSize,
         color: (downloaded == true ? Colors.green : Colors.blue),
         onPressed: () => playCallback(this),
